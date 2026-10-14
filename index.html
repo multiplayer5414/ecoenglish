@@ -29,6 +29,11 @@
 @keyframes treePop{from{transform:scale(.2);opacity:.2}to{transform:scale(1);opacity:1}}
 @media(max-width:650px){.daily-word,.drag-board{grid-template-columns:1fr}.daily-art{min-height:150px}.drag-items,.drop-zones{grid-template-columns:repeat(2,minmax(0,1fr))}.habitat-scene{min-height:250px}}
 
+
+.habitat-scene{display:block;padding:0;min-height:0;background:#eaf6e8;overflow:hidden;border-radius:24px}
+.habitat-scene.saved{background:#eaf6e8}
+.habitat-image{display:block;width:100%;aspect-ratio:1.65/1;object-fit:cover;border-radius:22px}
+
 </style>
 </head>
 <body>
@@ -68,7 +73,7 @@
 </div></section>
 
 <section class="section section-soft" id="habitat"><div class="wrap"><div class="section-head"><div><div class="tiny-label">Spend your eco points</div><h2>🌳 Your Habitat</h2><p>Rescue a forest, then bring it back to life one tree at a time.</p></div><span class="pill">Your choices are saved in this browser</span></div>
-<div class="panel"><div class="habitat-scene" id="habitatScene"><div class="habitat-sky" id="habitatSky">🔥 🔥 🌫️ 🔥</div><div class="habitat-ground" id="habitatGround"><span class="habitat-flame">🔥</span><span class="habitat-flame">🔥</span><span class="habitat-flame">🔥</span><span class="habitat-flame">🔥</span></div></div>
+<div class="panel"><div class="habitat-scene" id="habitatScene"><img id="habitatImage" class="habitat-image" src="assets/forest_burning.jpg" alt="A forest burning in a wildfire"></div>
 <div class="habitat-status" id="habitatStatus" aria-live="polite">The forest is burning. Rescue it for 50 points.</div><div class="habitat-controls"><button class="btn btn-primary" id="rescueForest">🧯 Rescue the forest · 50 points</button><button class="btn btn-lime" id="plantTree" hidden>🌱 Plant a tree · 10 points</button><button class="btn btn-light" id="resetHabitat">Reset habitat</button></div><p class="muted" style="margin-bottom:0">Every tree costs 10 points. Your habitat and points are saved in this browser.</p></div>
 </div></section>
 
@@ -211,15 +216,19 @@ renderCleanup();
 state.habitatStage = state.habitatStage || 'burning';
 state.habitatTrees = Number(state.habitatTrees)||0;
 function renderHabitat(){
- const scene=document.getElementById('habitatScene'),sky=document.getElementById('habitatSky'),ground=document.getElementById('habitatGround');
+ const scene=document.getElementById('habitatScene'),img=document.getElementById('habitatImage');
  const rescue=document.getElementById('rescueForest'),plant=document.getElementById('plantTree');
  if(state.habitatStage==='burning'){
-  scene.classList.remove('saved');sky.textContent='🌫️ 🔥 ☁️ 🔥';ground.innerHTML='<span class="habitat-flame">🔥</span><span class="habitat-flame">🔥</span><span class="habitat-flame">🔥</span><span class="habitat-flame">🔥</span><span class="habitat-flame">🔥</span>';
+  scene.classList.remove('saved');img.src='assets/forest_burning.jpg';img.alt='A forest burning in a wildfire';
   document.getElementById('habitatStatus').textContent='The forest is burning. Rescue it for 50 points.';rescue.hidden=false;plant.hidden=true;rescue.disabled=state.points<50;rescue.textContent=state.points<50?'🧯 Rescue the forest · 50 points (need '+(50-state.points)+' more)':'🧯 Rescue the forest · 50 points';
  }else{
-  scene.classList.add('saved');sky.textContent='☀️ 🕊️ ☁️';ground.innerHTML=Array.from({length:state.habitatTrees},()=>'<span class="habitat-tree" aria-label="tree">🌳</span>').join('')||'<span style="font-size:1.1rem;color:#245d2e;font-weight:800">A fresh green clearing — ready for trees!</span>';
+  scene.classList.add('saved');
+  const trees=Math.max(0,Number(state.habitatTrees)||0);
+  const imageName=trees===0?'forest_cleared.jpg':`trees_${Math.min(trees,5)}.jpg`;
+  img.src='assets/'+imageName;
+  img.alt=trees===0?'A green forest clearing after the fire has been put out':`${trees} tree${trees===1?'':'s'} planted in a restored green habitat`;
   rescue.hidden=true;plant.hidden=false;plant.disabled=state.points<10;plant.textContent=state.points<10?'🌱 Plant a tree · 10 points (need '+(10-state.points)+' more)':'🌱 Plant a tree · 10 points';
-  document.getElementById('habitatStatus').textContent='Forest rescued! Trees planted: '+state.habitatTrees+'. Keep growing your habitat.';
+  document.getElementById('habitatStatus').textContent='Forest rescued! Trees planted: '+trees+'. Keep growing your habitat.';
  }
 }
 document.getElementById('rescueForest').onclick=()=>{if(state.habitatStage!=='burning'||state.points<50)return;state.points-=50;state.habitatStage='saved';save();renderHabitat();showToast('Forest rescued! 🌿')};
