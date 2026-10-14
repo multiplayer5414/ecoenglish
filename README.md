@@ -33,3 +33,9 @@ To connect a real AI model, use a backend (for example, a small serverless funct
 - All scores are stored in the current browser only. Clearing browser site data may reset progress.
 - Audio uses the browser's Speech Synthesis feature and may vary by device/browser.
 - Environmental facts are simplified for beginner learners.
+
+
+## New features in this version
+- **Word of the Day:** an environment-related English word with an illustration, definition, pronunciation, and example sentence. The word changes daily.
+- **Clean-up Mission (Drag & Drop):** sort litter into recycling, compost, and general-waste bins. On touch screens, tap an item and then its bin.
+- **Your Habitat:** rescue a burning forest for 50 points, then plant trees for 10 points each. Habitat progress is saved in the browser along with your existing points.

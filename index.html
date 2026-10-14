@@ -12,12 +12,29 @@
 @media(max-width:800px){.navlinks{gap:10px}.navlinks a:not(.nav-cta){display:none}.hero-grid,.tutor-grid{grid-template-columns:1fr}.hero{padding-top:48px}.hero-art{min-height:300px}.grid3{grid-template-columns:1fr 1fr}.feature-row{grid-template-columns:1fr 1fr}.games-layout{grid-template-columns:1fr}.section{padding:48px 0}.section-head{align-items:start;flex-direction:column}.eco-challenge{align-items:flex-start;flex-direction:column}.hero h1{letter-spacing:-2px}}
 @media(max-width:480px){.grid3{grid-template-columns:1fr}.feature-row{grid-template-columns:1fr 1fr}.nav{height:66px}.brand{font-size:1rem}.logo{width:36px;height:36px}.nav-cta{padding:10px 12px}.hero-art{min-height:265px}.sun{width:200px;height:200px}.art-land{font-size:4.8rem}.quiz-options{grid-template-columns:1fr}.footer-row{flex-direction:column;align-items:flex-start}.word-grid{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+/* New EcoEnglish activities */
+.daily-word{display:grid;grid-template-columns:.8fr 1.2fr;gap:24px;align-items:center;background:#fff;border:1px solid #dcebe0;border-radius:24px;padding:25px;box-shadow:var(--shadow)}
+.daily-art{display:grid;place-items:center;min-height:210px;border-radius:20px;background:linear-gradient(145deg,#e5f7d0,#c6ebc9);font-size:6rem}
+.daily-word h3{font-size:2rem;margin:8px 0}.daily-word .pronunciation{color:var(--muted);font-weight:700}
+.drag-board{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.drag-items,.drop-zones{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-content:start}
+.drag-item{background:#fff;border:2px solid #cfe2d3;border-radius:15px;padding:13px 8px;text-align:center;font-weight:800;cursor:grab;touch-action:manipulation}
+.drag-item .item-emoji{display:block;font-size:2rem;margin-bottom:4px}.drag-item.selected{border-color:var(--green);background:#e3f6e8}
+.drop-zone{border:2px dashed #9abda3;border-radius:16px;padding:15px 8px;text-align:center;background:#fff;min-height:110px}
+.drop-zone .zone-emoji{font-size:2rem;display:block}.drop-zone.over{background:#e5f8e8;border-color:var(--green)}.drop-zone .zone-items{font-size:.85rem;margin-top:5px;color:var(--muted)}
+.habitat-scene{min-height:300px;border-radius:24px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;position:relative;background:linear-gradient(#f9c58a 0%,#ffdf9d 48%,#bd6c3b 49%,#8d4b30 100%);border:1px solid #e8c5a0}
+.habitat-scene.saved{background:linear-gradient(#bce9fa 0%,#e4f8ff 47%,#80c96b 48%,#4b9c52 100%)}
+.habitat-sky{text-align:center;font-size:3rem;min-height:95px}.habitat-ground{display:flex;justify-content:center;align-items:end;gap:6px;flex-wrap:wrap;min-height:120px}.habitat-tree{font-size:3.3rem;animation:treePop .35s ease-out}.habitat-flame{font-size:2.5rem;filter:drop-shadow(0 2px 3px #9d331c)}.habitat-controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.habitat-status{font-weight:800;margin-top:14px;min-height:26px}
+@keyframes treePop{from{transform:scale(.2);opacity:.2}to{transform:scale(1);opacity:1}}
+@media(max-width:650px){.daily-word,.drag-board{grid-template-columns:1fr}.daily-art{min-height:150px}.drag-items,.drop-zones{grid-template-columns:repeat(2,minmax(0,1fr))}.habitat-scene{min-height:250px}}
+
 </style>
 </head>
 <body>
 <header class="topbar"><div class="wrap nav">
 <a class="brand" href="#home" aria-label="EcoEnglish home"><span class="logo">🌿</span><span>EcoEnglish</span></a>
-<nav class="navlinks" aria-label="Main navigation"><a href="#lessons">Lessons</a><a href="#games">Games</a><a href="#tutor">AI Tutor</a><a href="#progress">My Progress</a><a class="btn btn-primary nav-cta" href="#games">Play now ↗</a></nav>
+<nav class="navlinks" aria-label="Main navigation"><a href="#lessons">Lessons</a><a href="#word-of-day">Word of the Day</a><a href="#games">Games</a><a href="#habitat">Habitat</a><a href="#tutor">AI Tutor</a><a href="#progress">My Progress</a><a class="btn btn-primary nav-cta" href="#games">Play now ↗</a></nav>
 </div></header>
 <main>
 <section class="hero" id="home"><div class="wrap hero-grid">
@@ -27,11 +44,21 @@
 <section class="section" id="lessons"><div class="wrap"><div class="section-head"><div><div class="tiny-label">Learn step by step</div><h2>Small lessons, big impact.</h2><p>Choose a topic, learn useful words, and try a mini challenge.</p></div><span class="pill">A1–A2 English</span></div>
 <div class="grid3" id="lessonGrid"></div><div class="panel lesson-detail" id="lessonDetail" aria-live="polite"></div>
 </div></section>
+
+<section class="section section-soft" id="word-of-day"><div class="wrap">
+  <div class="section-head"><div><div class="tiny-label">A little learning every day</div><h2>🌱 Word of the Day</h2><p>Learn one environment-related English word each day.</p></div><span class="pill" id="wordDate"></span></div>
+  <div class="daily-word"><div class="daily-art" id="dailyWordArt" aria-label="Word illustration">🌿</div><div><div class="tiny-label">TODAY'S ECO WORD</div><h3 id="dailyWordTitle">Habitat</h3><div class="pronunciation" id="dailyWordType">noun · /ˈhæbɪtæt/</div><p id="dailyWordMeaning">The natural home of an animal or plant.</p><p><b>Example:</b> <span id="dailyWordExample">A forest is a habitat for many animals.</span></p><button class="btn btn-primary" id="speakDailyWord">🔊 Hear the word</button> <span class="pill">+5 points for today's word</span><button class="btn btn-light" id="learnDailyWord" style="margin-top:8px">I learned this word</button><div class="feedback" id="dailyWordFeedback" aria-live="polite"></div></div></div>
+</div></section>
+
 <section class="section section-soft" id="games"><div class="wrap"><div class="section-head"><div><div class="tiny-label">Practice zone</div><h2>Play your way to progress.</h2><p>Try a vocabulary match and a quick multiple-choice game.</p></div></div>
 <div class="games-layout">
 <div class="game-card"><h3>🧩 Word Match</h3><p>Choose the meaning that matches the word.</p><div class="game-area"><div id="matchPrompt" aria-live="polite"><b>Ready?</b><br>Match an eco word to its meaning.</div><div class="option-list" id="matchOptions"></div><div class="feedback" id="matchFeedback" aria-live="polite"></div><div class="game-controls"><button class="btn btn-primary" id="startMatch">Start game</button><button class="btn btn-light" id="nextMatch" hidden>Next word →</button></div></div></div>
 <div class="game-card"><h3>✏️ Fill the gap</h3><p>Complete the sentence with the correct word.</p><div class="game-area"><div id="fillPrompt" class="quiz-question">We should ___ water when we brush our teeth.</div><div class="option-list" id="fillOptions"></div><div class="feedback" id="fillFeedback" aria-live="polite"></div><div class="game-controls"><button class="btn btn-light" id="nextFill">Another sentence ↻</button></div></div></div>
-</div></div></section>
+</div>
+
+<div class="game-card" style="margin-top:20px"><h3>🧤 Clean-up Mission: Drag & Drop</h3><p>Drag each item to the correct place. On phones, tap an item and then tap a bin.</p>
+<div class="game-area"><div class="drag-board"><div><b>Pick up the litter</b><div class="drag-items" id="dragItems"></div></div><div><b>Where does it go?</b><div class="drop-zones" id="dropZones"></div></div></div><div class="feedback" id="dragFeedback" aria-live="polite">Sort all the items to complete the clean-up mission.</div><div class="game-controls"><button class="btn btn-primary" id="restartDrag">Restart mission</button></div></div></div>
+</div></section>
 <section class="section" id="quiz"><div class="wrap"><div class="section-head"><div><div class="tiny-label">Knowledge check</div><h2>The 15-question eco quiz.</h2><p>Answer in simple English. Get feedback after every question.</p></div></div>
 <div class="panel quiz-box" id="quizPanel"><div class="quiz-top"><span id="quizCount">Question 1 of 15</span><span>⭐ <span id="quizScore">0</span> points</span></div><div class="progress-wrap" aria-label="Quiz progress"><div class="progress-fill" id="quizProgress"></div></div><div class="quiz-question" id="quizQuestion"></div><div class="quiz-options" id="quizOptions"></div><div class="feedback" id="quizFeedback" aria-live="polite"></div><div class="game-controls"><button class="btn btn-primary" id="quizNext" disabled>Next question →</button><button class="btn btn-light" id="quizRestart">Restart quiz</button></div></div>
 </div></section>
@@ -39,6 +66,12 @@
 <div class="tutor-grid"><div class="tutor-box"><div class="lesson-emoji">🤖</div><h3>EcoEnglish Tutor</h3><p class="muted">This demo tutor works locally in your browser. It gives simple rule-based tips and practice prompts. A real AI model is <b>not connected</b>.</p><button class="btn btn-primary" id="generatePrompt">Give me a practice question</button><p class="muted" style="font-size:.85rem;margin-bottom:0">Want a real AI tutor? See the setup notes in README.md. Never put a private API key in public website code.</p></div>
 <div class="tutor-box"><div class="chatlog" id="chatlog" role="log" aria-live="polite"><div class="bubble-chat">Hi! 👋 I'm your practice buddy. Write a simple English sentence about nature, or ask me about words like “recycle” and “save”.</div></div><form class="chat-form" id="chatForm"><label class="sr-only" for="chatInput">Write a message</label><input id="chatInput" maxlength="400" placeholder="e.g. We must saves water." required><button class="btn btn-primary" type="submit">Send</button></form><div class="game-controls"><button class="btn btn-light" id="speakLast" type="button">🔊 Read last message</button><button class="btn btn-light" id="clearChat" type="button">Clear chat</button></div></div></div>
 </div></section>
+
+<section class="section section-soft" id="habitat"><div class="wrap"><div class="section-head"><div><div class="tiny-label">Spend your eco points</div><h2>🌳 Your Habitat</h2><p>Rescue a forest, then bring it back to life one tree at a time.</p></div><span class="pill">Your choices are saved in this browser</span></div>
+<div class="panel"><div class="habitat-scene" id="habitatScene"><div class="habitat-sky" id="habitatSky">🔥 🔥 🌫️ 🔥</div><div class="habitat-ground" id="habitatGround"><span class="habitat-flame">🔥</span><span class="habitat-flame">🔥</span><span class="habitat-flame">🔥</span><span class="habitat-flame">🔥</span></div></div>
+<div class="habitat-status" id="habitatStatus" aria-live="polite">The forest is burning. Rescue it for 50 points.</div><div class="habitat-controls"><button class="btn btn-primary" id="rescueForest">🧯 Rescue the forest · 50 points</button><button class="btn btn-lime" id="plantTree" hidden>🌱 Plant a tree · 10 points</button><button class="btn btn-light" id="resetHabitat">Reset habitat</button></div><p class="muted" style="margin-bottom:0">Every tree costs 10 points. Your habitat and points are saved in this browser.</p></div>
+</div></section>
+
 <section class="section" id="progress"><div class="wrap"><div class="section-head"><div><div class="tiny-label">Your green journey</div><h2>Every little win counts.</h2><p>Your points and badges are saved only in this browser.</p></div><button class="btn btn-light" id="resetProgress">Reset progress</button></div>
 <div class="grid3" style="margin-bottom:24px"><div class="panel"><div class="tiny-label">Total points</div><div style="font-size:2.3rem;font-weight:900" id="totalPoints">0</div><span class="muted">Keep learning!</span></div><div class="panel"><div class="tiny-label">Quiz best score</div><div style="font-size:2.3rem;font-weight:900" id="bestScore">0/15</div><span class="muted">You can try again.</span></div><div class="panel"><div class="tiny-label">Lessons opened</div><div style="font-size:2.3rem;font-weight:900" id="lessonsDone">0/5</div><span class="muted">Explore new topics.</span></div></div>
 <h3>🏅 Eco badges</h3><div class="badge-row" id="badgeRow"></div>
@@ -102,5 +135,101 @@ document.getElementById('chatForm').onsubmit=e=>{e.preventDefault();const inp=do
 document.getElementById('generatePrompt').onclick=()=>{const prompts=['Write one sentence about how you save water.','Choose the correct word: We should (protect / protects) animals.','Complete: The sun gives us ___ energy.','What can you recycle at home? Write one short sentence.','Make a sentence with the word “habitat”.'];addChat(prompts[Math.floor(Math.random()*prompts.length)],'bot');document.getElementById('tutor').scrollIntoView({behavior:'smooth',block:'start'})};
 document.getElementById('clearChat').onclick=()=>{chatlog.innerHTML='';addChat('Chat cleared! Write a sentence whenever you are ready.','bot')};
 document.getElementById('speakLast').onclick=()=>{if(!('speechSynthesis'in window)){showToast('Audio is not supported in this browser.');return}window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(lastBotMessage);u.lang='en-US';u.rate=.88;window.speechSynthesis.speak(u)};
+
+// WORD OF THE DAY: one environment word per calendar day
+const dailyWords = [
+ {word:'habitat',type:'noun · /ˈhæbɪtæt/',meaning:'The natural home of an animal or plant.',example:'A forest is a habitat for many animals.',emoji:'🌳'},
+ {word:'recycle',type:'verb · /ˌriːˈsaɪkəl/',meaning:'To use or process something again instead of throwing it away.',example:'We recycle paper and plastic.',emoji:'♻️'},
+ {word:'drought',type:'noun · /draʊt/',meaning:'A long time with very little or no rain.',example:'The drought made it hard for plants to grow.',emoji:'☀️'},
+ {word:'pollution',type:'noun · /pəˈluːʃən/',meaning:'Harmful substances in air, water, or land.',example:'We should reduce air pollution.',emoji:'🏭'},
+ {word:'renewable',type:'adjective · /rɪˈnuːəbəl/',meaning:'Naturally replaced, so it will not run out quickly.',example:'Solar power is a renewable energy source.',emoji:'🌞'},
+ {word:'conservation',type:'noun · /ˌkɒnsəˈveɪʃən/',meaning:'The protection of nature, animals, and resources.',example:'Wildlife conservation protects endangered animals.',emoji:'🐢'},
+ {word:'compost',type:'noun/verb · /ˈkɒmpɒst/',meaning:'Decayed food and plant material used to help soil.',example:'We put fruit peels in the compost.',emoji:'🍂'}
+];
+const dayNumber = Math.floor(Date.UTC(new Date().getFullYear(),new Date().getMonth(),new Date().getDate())/86400000);
+const todayWord = dailyWords[((dayNumber % dailyWords.length)+dailyWords.length)%dailyWords.length];
+document.getElementById('wordDate').textContent = new Date().toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'});
+document.getElementById('dailyWordArt').textContent = todayWord.emoji;
+document.getElementById('dailyWordArt').setAttribute('aria-label',todayWord.word+' illustration');
+document.getElementById('dailyWordTitle').textContent = todayWord.word;
+document.getElementById('dailyWordType').textContent = todayWord.type;
+document.getElementById('dailyWordMeaning').textContent = todayWord.meaning;
+document.getElementById('dailyWordExample').textContent = todayWord.example;
+const wordLearnKey='ecoenglish-word-'+new Date().toISOString().slice(0,10);
+if(localStorage.getItem(wordLearnKey)==='yes'){document.getElementById('learnDailyWord').textContent='Learned today ✓';document.getElementById('dailyWordFeedback').textContent='Great work! You have learned today’s word.'}
+document.getElementById('speakDailyWord').onclick=()=>{if('speechSynthesis'in window){const u=new SpeechSynthesisUtterance(todayWord.word+'. '+todayWord.meaning+'. Example: '+todayWord.example);u.lang='en-US';window.speechSynthesis.speak(u)}else showToast('Audio is not supported in this browser.')};
+document.getElementById('learnDailyWord').onclick=()=>{if(localStorage.getItem(wordLearnKey)==='yes'){showToast('You already learned today’s word!')}else{localStorage.setItem(wordLearnKey,'yes');addPoints(5);document.getElementById('learnDailyWord').textContent='Learned today ✓';document.getElementById('dailyWordFeedback').textContent='Excellent! Come back tomorrow for a new word.'}};
+
+// DRAG & DROP CLEAN-UP MISSION
+const cleanupItems=[
+ {id:'paper',name:'Newspaper',emoji:'📰',bin:'recycle'},
+ {id:'bottle',name:'Plastic bottle',emoji:'🧴',bin:'recycle'},
+ {id:'peel',name:'Banana peel',emoji:'🍌',bin:'compost'},
+ {id:'leaves',name:'Dry leaves',emoji:'🍂',bin:'compost'},
+ {id:'wrapper',name:'Dirty wrapper',emoji:'🍬',bin:'trash'},
+ {id:'broken',name:'Broken toy',emoji:'🧸',bin:'trash'}
+];
+const cleanupBins=[
+ {id:'recycle',name:'Recycling',emoji:'♻️'},
+ {id:'compost',name:'Compost',emoji:'🌱'},
+ {id:'trash',name:'General waste',emoji:'🗑️'}
+];
+let cleanupOrder=[],cleanupSorted={},selectedCleanup=null;
+function renderCleanup(){
+ cleanupOrder=[...cleanupItems].sort(()=>Math.random()-.5);cleanupSorted={};selectedCleanup=null;
+ document.getElementById('dragItems').innerHTML=cleanupOrder.map(it=>`<button class="drag-item" draggable="true" data-item="${it.id}" aria-label="${it.name}, drag to a bin"><span class="item-emoji">${it.emoji}</span>${it.name}</button>`).join('');
+ document.getElementById('dropZones').innerHTML=cleanupBins.map(bin=>`<div class="drop-zone" data-bin="${bin.id}" tabindex="0" role="button" aria-label="Drop items in ${bin.name}"><span class="zone-emoji">${bin.emoji}</span><b>${bin.name}</b><div class="zone-items" id="zone-${bin.id}">Drop here</div></div>`).join('');
+ document.getElementById('dragFeedback').textContent='Drag an item to its bin, or tap an item and then tap a bin.';
+ document.querySelectorAll('[data-item]').forEach(el=>{
+  el.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',el.dataset.item);selectedCleanup=el.dataset.item});
+  el.addEventListener('click',()=>{selectedCleanup=el.dataset.item;document.querySelectorAll('[data-item]').forEach(x=>x.classList.toggle('selected',x===el));document.getElementById('dragFeedback').textContent='Selected '+cleanupItems.find(x=>x.id===selectedCleanup).name+'. Now tap the correct bin.'});
+ });
+ document.querySelectorAll('[data-bin]').forEach(el=>{
+  el.addEventListener('dragover',e=>{e.preventDefault();el.classList.add('over')});
+  el.addEventListener('dragleave',()=>el.classList.remove('over'));
+  el.addEventListener('drop',e=>{e.preventDefault();el.classList.remove('over');placeCleanupItem(e.dataTransfer.getData('text/plain'),el.dataset.bin)});
+  el.addEventListener('click',()=>{if(selectedCleanup)placeCleanupItem(selectedCleanup,el.dataset.bin)});
+  el.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&selectedCleanup){e.preventDefault();placeCleanupItem(selectedCleanup,el.dataset.bin)}});
+ });
+}
+function placeCleanupItem(itemId,binId){
+ if(!itemId||cleanupSorted[itemId])return;
+ const item=cleanupItems.find(x=>x.id===itemId);if(!item)return;
+ if(item.bin!==binId){document.getElementById('dragFeedback').textContent='Not quite! Try another place for '+item.name+'.';return}
+ cleanupSorted[itemId]=true;
+ const itemEl=document.querySelector(`[data-item="${itemId}"]`);if(itemEl){itemEl.draggable=false;itemEl.disabled=true;itemEl.style.opacity='.45';itemEl.style.cursor='default';itemEl.classList.remove('selected')}
+ selectedCleanup=null;
+ const zone=document.getElementById('zone-'+binId);zone.textContent=cleanupItems.filter(x=>cleanupSorted[x.id]&&x.bin===binId).map(x=>x.emoji+' '+x.name).join(' · ');
+ const done=Object.keys(cleanupSorted).length;
+ if(done===cleanupItems.length){document.getElementById('dragFeedback').textContent='Mission complete! You sorted all the litter correctly. +15 points 🌍';addPoints(15)}
+ else document.getElementById('dragFeedback').textContent='Correct! '+item.name+' goes in '+cleanupBins.find(x=>x.id===binId).name+'. '+done+'/'+cleanupItems.length+' sorted.';
+}
+document.getElementById('restartDrag').onclick=renderCleanup;
+renderCleanup();
+
+// HABITAT: rescue the forest, then spend points planting trees
+state.habitatStage = state.habitatStage || 'burning';
+state.habitatTrees = Number(state.habitatTrees)||0;
+function renderHabitat(){
+ const scene=document.getElementById('habitatScene'),sky=document.getElementById('habitatSky'),ground=document.getElementById('habitatGround');
+ const rescue=document.getElementById('rescueForest'),plant=document.getElementById('plantTree');
+ if(state.habitatStage==='burning'){
+  scene.classList.remove('saved');sky.textContent='🌫️ 🔥 ☁️ 🔥';ground.innerHTML='<span class="habitat-flame">🔥</span><span class="habitat-flame">🔥</span><span class="habitat-flame">🔥</span><span class="habitat-flame">🔥</span><span class="habitat-flame">🔥</span>';
+  document.getElementById('habitatStatus').textContent='The forest is burning. Rescue it for 50 points.';rescue.hidden=false;plant.hidden=true;rescue.disabled=state.points<50;rescue.textContent=state.points<50?'🧯 Rescue the forest · 50 points (need '+(50-state.points)+' more)':'🧯 Rescue the forest · 50 points';
+ }else{
+  scene.classList.add('saved');sky.textContent='☀️ 🕊️ ☁️';ground.innerHTML=Array.from({length:state.habitatTrees},()=>'<span class="habitat-tree" aria-label="tree">🌳</span>').join('')||'<span style="font-size:1.1rem;color:#245d2e;font-weight:800">A fresh green clearing — ready for trees!</span>';
+  rescue.hidden=true;plant.hidden=false;plant.disabled=state.points<10;plant.textContent=state.points<10?'🌱 Plant a tree · 10 points (need '+(10-state.points)+' more)':'🌱 Plant a tree · 10 points';
+  document.getElementById('habitatStatus').textContent='Forest rescued! Trees planted: '+state.habitatTrees+'. Keep growing your habitat.';
+ }
+}
+document.getElementById('rescueForest').onclick=()=>{if(state.habitatStage!=='burning'||state.points<50)return;state.points-=50;state.habitatStage='saved';save();renderHabitat();showToast('Forest rescued! 🌿')};
+document.getElementById('plantTree').onclick=()=>{if(state.habitatStage!=='saved'||state.points<10)return;state.points-=10;state.habitatTrees++;save();renderHabitat();showToast('A new tree is growing! +🌳')};
+document.getElementById('resetHabitat').onclick=()=>{if(confirm('Reset the habitat to the burning forest? This does not refund spent points.')){state.habitatStage='burning';state.habitatTrees=0;save();renderHabitat();showToast('Habitat reset.')}};renderHabitat();
+
+// Keep habitat controls in sync when points change elsewhere.
+const oldRenderProgress=renderProgress;
+renderProgress=function(){oldRenderProgress();if(document.getElementById('habitatScene'))renderHabitat()};
+renderProgress();
+
 </script>
 </body></html>
