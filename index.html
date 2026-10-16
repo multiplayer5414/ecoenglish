@@ -268,13 +268,29 @@ function wbStatus(message, kind='') { const el=wbEl('wbStatus'); el.textContent=
 function wbStopTimers(){ if(wbPollTimer){clearInterval(wbPollTimer);wbPollTimer=null;} if(wbCountdownTimer){clearInterval(wbCountdownTimer);wbCountdownTimer=null;} }
 function wbSetButtons(inMatch){wbEl('wbFind').hidden=inMatch;wbEl('wbCancel').hidden=!inMatch;}
 async function wbInit(){
-  if(WB_SUPABASE_KEY.includes('PASTE_YOUR')) { wbStatus('Setup needed: add your Supabase publishable key in the HTML file first.'); wbEl('wbFind').disabled=true; return false; }
-  if(!window.supabase){wbStatus('Supabase library could not load. Check your internet connection.');return false;}
-  if(!wbClient) wbClient=window.supabase.createClient(WB_SUPABASE_URL,WB_SUPABASE_KEY);
-  let {data,error}=await wbClient.auth.getSession();
-  if(error){wbStatus('Could not connect to Supabase: '+error.message);return false;}
-  if(!data.session){const sign=await wbClient.auth.signInAnonymously();if(sign.error){wbStatus('Anonymous sign-in failed. Check that Anonymous Sign-Ins are enabled in Supabase.');return false;}data=await wbClient.auth.getSession();}
-  wbUser=data.data.session.user; return true;
+  try {
+    if(WB_SUPABASE_KEY.includes('PASTE_YOUR')) { wbStatus('Setup needed: add your Supabase publishable key in the HTML file first.'); wbEl('wbFind').disabled=false; return false; }
+    if(!window.supabase || typeof window.supabase.createClient !== 'function') { wbStatus('Supabase library could not load. Check your internet connection and reload the page.'); wbEl('wbFind').disabled=false; return false; }
+    if(!wbClient) wbClient=window.supabase.createClient(WB_SUPABASE_URL,WB_SUPABASE_KEY);
+    let sessionResult = await wbClient.auth.getSession();
+    if(sessionResult?.error) throw sessionResult.error;
+    let session = sessionResult?.data?.session || null;
+    if(!session){
+      const signResult = await wbClient.auth.signInAnonymously();
+      if(signResult?.error) throw signResult.error;
+      sessionResult = await wbClient.auth.getSession();
+      if(sessionResult?.error) throw sessionResult.error;
+      session = sessionResult?.data?.session || null;
+    }
+    if(!session?.user?.id) throw new Error('Supabase did not return a user session. Check Authentication settings and reload the page.');
+    wbUser=session.user;
+    return true;
+  } catch(e) {
+    console.error('Word Battle initialization failed:', e);
+    wbStatus('Connection/session error: ' + (e?.message || String(e)));
+    wbEl('wbFind').disabled=false;
+    return false;
+  }
 }
 async function wbFindOpponent(){
   wbEl('wbFind').disabled=true; wbStatus('Connecting…');
@@ -311,6 +327,9 @@ async function wbRefreshMatch(){
     if(m.match_status==='finished'){
       wbStopTimers();wbEl('wbGame').hidden=true;wbStatus('Match finished! '+(Number(wbEl('wbMyScore').textContent)>Number(wbEl('wbOpponentScore').textContent)?'You win! 🏆':Number(wbEl('wbMyScore').textContent)<Number(wbEl('wbOpponentScore').textContent)?'Your opponent wins this time.':'It is a draw!'),'success');wbMatchId=null;wbEl('wbFind').disabled=false;wbSetButtons(false);return;
     }
+    if(m.match_status==='cancelled'){
+      wbStopTimers();wbMatchId=null;wbQuestionNo=-1;wbAnswered=false;wbEl('wbGame').hidden=true;wbEl('wbFind').disabled=false;wbSetButtons(false);wbStatus('The other player left the match. Press Find opponent to try again.');return;
+    }
     if(m.match_status!=='playing')return;
     if(m.current_question!==wbQuestionNo){wbQuestionNo=m.current_question;wbAnswered=false;wbSeconds=15;wbEl('wbGame').hidden=false;wbEl('wbQuestionCount').textContent='Question '+(wbQuestionNo+1)+' / 10';wbEl('wbProgress').style.width=(wbQuestionNo/10*100)+'%';wbEl('wbPrompt').textContent=m.prompt||'Waiting for the next question…';wbEl('wbAnswerFeedback').textContent='';wbEl('wbOptions').innerHTML='';
       (m.options||[]).forEach((opt,i)=>{const b=document.createElement('button');b.type='button';b.className='wb-option';b.textContent=opt;b.onclick=()=>wbSubmitAnswer(i);wbEl('wbOptions').appendChild(b);});
@@ -336,7 +355,14 @@ async function wbSubmitAnswer(index,timeout=false){
 }
 async function wbLeaveMatch(){
   wbStopTimers();
-  if(wbClient&&wbUser){try{await wbClient.from('word_battle_queue').delete().eq('user_id',wbUser.id);}catch(e){}}
+  const leavingMatchId=wbMatchId;
+  // Server-side cancellation is required; client-side queue deletion is blocked by RLS.
+  if(wbClient&&wbUser){
+    try{
+      const {error}=await wbClient.rpc('leave_word_battle_match',{p_match_id:leavingMatchId});
+      if(error) console.warn('Server-side leave cleanup:',error.message);
+    }catch(e){console.warn('Server-side leave cleanup failed:',e);}
+  }
   wbMatchId=null;wbQuestionNo=-1;wbAnswered=false;wbBusy=false;wbEl('wbGame').hidden=true;wbEl('wbFind').disabled=false;wbSetButtons(false);wbStatus('You left the match. Press Find opponent to play again.');
 }
 wbEl('wbFind').addEventListener('click',wbFindOpponent);
