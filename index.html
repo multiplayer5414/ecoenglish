@@ -40,12 +40,37 @@
 .wb-panel{max-width:820px;margin:auto}.wb-intro{display:flex;gap:16px;align-items:center}.wb-icon{font-size:2.6rem;background:#e8f5dc;border-radius:18px;padding:12px}.wb-intro h3{margin:0 0 6px}.wb-intro p{margin:0}.wb-scoreboard{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;text-align:center;gap:12px;background:#f4f8ee;border-radius:18px;padding:18px;margin:22px 0}.wb-scoreboard strong{display:block;font-size:2rem;color:#176344}.wb-vs{font-weight:900;color:#73927e}.wb-top{display:flex;justify-content:space-between;align-items:center;margin-top:20px}.wb-prompt{font-size:1.35rem;margin:18px 0}.wb-option{width:100%;text-align:left;padding:13px 16px;border:1px solid #d7e4d6;border-radius:12px;background:white;color:#173c2c;cursor:pointer;font:inherit;margin:5px 0}.wb-option:hover:not(:disabled){background:#eff8e9;border-color:#77aa74}.wb-option:disabled{opacity:.72;cursor:default}.wb-option.correct{border-color:#26965f;background:#e3f7e9}.wb-option.wrong{border-color:#c75a4a;background:#fff0ed}@media(max-width:600px){.wb-intro{align-items:flex-start}.wb-scoreboard{padding:12px}}
 </style>
 
+
+<style>
+.menu-toggle{display:grid;place-items:center;flex:0 0 48px;width:48px;height:48px;border:2px solid #176b4d;border-radius:15px;background:#e8f7ee;color:#176b4d;font-size:27px;line-height:1;z-index:30}
+.menu-toggle:hover{background:#d8efdf}.nav{justify-content:flex-start}.brand{margin-right:auto}
+.menu-backdrop{position:fixed;inset:0;background:rgba(10,35,24,.42);z-index:40;opacity:0;visibility:hidden;transition:opacity .2s,visibility .2s}
+.menu-backdrop.open{opacity:1;visibility:visible}
+.menu-drawer{position:fixed;top:0;left:0;bottom:0;width:min(340px,88vw);background:#fbfff8;z-index:41;box-shadow:12px 0 35px #103f3025;transform:translateX(-105%);transition:transform .25s ease;display:flex;flex-direction:column;padding:22px;overflow-y:auto}
+.menu-drawer.open{transform:translateX(0)}
+.menu-drawer-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:20px;border-bottom:1px solid #dcece0;margin-bottom:14px}
+.menu-close{border:0;background:#e8f7ee;color:#176b4d;border-radius:12px;width:42px;height:42px;font-size:25px}
+.menu-drawer a{display:block;padding:12px 14px;border-radius:12px;text-decoration:none;font-weight:750;color:#173b2c}
+.menu-drawer a:hover,.menu-drawer a:focus{background:#e8f7ee;color:#176b4d}
+.menu-drawer .menu-group{font-size:.75rem;letter-spacing:1.4px;text-transform:uppercase;color:#587367;font-weight:900;padding:15px 14px 5px}
+body.menu-open{overflow:hidden}
+@media(max-width:800px){.navlinks{display:none}.nav{justify-content:flex-start}.brand{margin-right:0}.menu-toggle{margin-right:2px}}
+</style>
+
 </head>
 <body>
 <header class="topbar"><div class="wrap nav">
+<button class="menu-toggle" id="menuToggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="menuDrawer">☰</button>
 <a class="brand" href="#home" aria-label="EcoEnglish home"><span class="logo">🌿</span><span>EcoEnglish</span></a>
 <nav class="navlinks" aria-label="Main navigation"><a href="#lessons">Lessons</a><a href="#word-of-day">Word of the Day</a><a href="#games">Games</a><a href="#word-battle">Word Battle</a><a href="#habitat">Habitat</a><a href="#tutor">AI Tutor</a><a href="#progress">My Progress</a><a class="btn btn-primary nav-cta" href="#games">Play now ↗</a></nav>
 </div></header>
+<div class="menu-backdrop" id="menuBackdrop"></div>
+<aside class="menu-drawer" id="menuDrawer" aria-label="Site navigation" aria-hidden="true">
+  <div class="menu-drawer-head"><a class="brand" href="#home"><span class="logo">🌿</span><span>EcoEnglish</span></a><button class="menu-close" id="menuClose" type="button" aria-label="Close navigation menu">×</button></div>
+  <div class="menu-group">Explore</div><a href="#home">🏠 Home</a><a href="#lessons">📚 Lessons</a><a href="#word-of-day">🌱 Word of the Day</a>
+  <div class="menu-group">Play & practise</div><a href="#games">🎮 Games & Clean-up Mission</a><a href="#word-battle">⚔️ Word Battle (1 vs 1)</a><a href="#quiz">🧠 Eco Quiz</a><a href="#tutor">🤖 AI Tutor</a>
+  <div class="menu-group">Your green journey</div><a href="#habitat">🌳 My Habitat</a><a href="#progress">🏅 My Progress</a>
+</aside>
 <main>
 <section class="hero" id="home"><div class="wrap hero-grid">
 <div><span class="eyebrow">🌍 English for a greener future</span><h1>Grow your English.<br><span>Grow a better</span> planet.</h1><p>Learn everyday English through fun eco-missions, quick games, and small actions that make a big difference.</p><div class="hero-actions"><a class="btn btn-primary" href="#lessons">Start learning <span aria-hidden="true">→</span></a><a class="btn btn-light" href="#quiz">Take a quick quiz</a></div><p class="hero-note">✨ Friendly for A1–A2 learners · Free to explore · No account needed</p></div>
@@ -369,4 +394,28 @@ wbEl('wbFind').addEventListener('click',wbFindOpponent);
 wbEl('wbCancel').addEventListener('click',wbLeaveMatch);
 
 </script>
+
+<script>
+(() => {
+  const toggle = document.getElementById('menuToggle');
+  const drawer = document.getElementById('menuDrawer');
+  const backdrop = document.getElementById('menuBackdrop');
+  const closeBtn = document.getElementById('menuClose');
+  if (!toggle || !drawer || !backdrop || !closeBtn) return;
+  function setMenu(open) {
+    drawer.classList.toggle('open', open);
+    backdrop.classList.toggle('open', open);
+    document.body.classList.toggle('menu-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    drawer.setAttribute('aria-hidden', String(!open));
+    toggle.setAttribute('aria-label', open ? 'Close navigation menu' : 'Open navigation menu');
+  }
+  toggle.addEventListener('click', () => setMenu(!drawer.classList.contains('open')));
+  closeBtn.addEventListener('click', () => setMenu(false));
+  backdrop.addEventListener('click', () => setMenu(false));
+  drawer.querySelectorAll('a[href^="#"]').forEach(link => link.addEventListener('click', () => setMenu(false)));
+  document.addEventListener('keydown', event => { if (event.key === 'Escape') setMenu(false); });
+})();
+</script>
+
 </body></html>
